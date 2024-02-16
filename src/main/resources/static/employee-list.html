@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EmployeeManagement</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+<br>
+<input type="button" onclick="addEmployee()" value="add" class="btn btn-primary"><br><br>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>EmployeeNumber</th>
+        <th>EmployeeName</th>
+        <th>AddressLine1</th>
+        <th>AddressLine1</th>
+        <th>City</th>
+        <th>Zipcode</th>
+    </tr>
+    </thead>
+    <tbody id="tableid">
+    <tr>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+<script>
+    $(document).ready(function () {
+        getAllEmployee();
+    })
+
+    function getAllEmployee() {
+        $.ajax({
+            url: "http://localhost:2001/getAllEmployee",
+            type: "GET",
+            contentType: "application/json",
+            success: function (result) {
+                $.each(result, function (i, v) {
+                    $('#tableid').append("<tr><td>" + v.employeeNumber + "</td>"
+                        + "<td>"+v.employeeName+"</td>"
+                        + " <td>" + v.address1 + "</td>"
+                        + "<td>" + v.address2 + "</td>"
+                        + "<td>" + v.city + "</td>"
+                        + "<td>" + v.zipcode + "</td>"
+                        + "<td><button onclick='updateEmployee("+v.employeeNumber+")' class=\"btn btn-primary\">Update</td>"
+                        + "<td><button onclick='deleteEmployee("+v.employeeNumber+")' class=\"btn btn-primary\">Delete</td>"
+                        + "</tr>")
+                })
+            }
+        });
+    }
+
+    function addEmployee() {
+        localStorage.clear()
+        window.location.href="add-employee.html"
+    }
+
+    function updateEmployee(id) {
+        localStorage.setItem("id",id)
+        window.location.href="add-employee.html"
+
+    }
+
+    function deleteEmployee(id) {
+        if(confirm("Do you wants to delete data")){
+            $.ajax({
+                url: "http://localhost:2001/deleteEmployee/"+id,
+                type: "DELETE",
+                contentType: "application/json",
+                success: function (result){
+                    $('#tableid').empty()
+                    alert("deleted successfully")
+                    getAllEmployee()
+                }
+            });
+        }
+
+    }
+
+</script>
+</body>
+</html>
